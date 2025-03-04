@@ -50,7 +50,7 @@ const InputBtn = ({ className = "", label = "Analyze" }) => {
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
-      throw new Error("There's not data", error);
+      console.error("There's not data", error);
     }
   };
 

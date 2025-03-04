@@ -75,7 +75,7 @@ export const getFileContent = async (
     }
     return null;
   } catch (error) {
-    throw new Error("File not decoded", error);
+    console.error("File not decoded", error);
     return null;
   }
 };
@@ -95,7 +95,9 @@ export const getImportantFiles = async (
 
     // Process files in parallel with Promise.all for better performance
     const filePromises = structure
-      .filter((item) => item.type === "blob" && extensionRegex.test(item.path))
+      .filter(
+        (item: any) => item.type === "blob" && extensionRegex.test(item.path)
+      )
       .map(async (item) => {
         const content = await getFileContent(owner, repo, item.path);
         return {

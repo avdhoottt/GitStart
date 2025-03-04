@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useRepo } from "../context/useInput";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { nightOwl } from "react-syntax-highlighter/dist/cjs/styles/prism";
+import { nightOwl } from "react-syntax-highlighter/dist/esm/styles/prism";
 import remarkGfm from "remark-gfm";
 import Navbar from "./Navbar";
 import { useAuth } from "../context/AuthContext";
@@ -225,9 +225,9 @@ const AnalysisDisplay = () => {
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 components={{
-                  code({ node, inline, className, children, ...props }) {
+                  code({ className, children, ...props }) {
                     const match = /language-(\w+)/.exec(className || "");
-                    return !inline && match ? (
+                    return match ? (
                       <div className="my-4 rounded-lg overflow-hidden">
                         <div className="bg-gray-800 px-4 py-2 text-xs text-gray-400 border-b border-gray-700 flex justify-between items-center">
                           <span>{match[1]}</span>

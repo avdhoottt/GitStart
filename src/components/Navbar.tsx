@@ -37,6 +37,7 @@ const Navbar = () => {
             onClick={toggleMenu}
             aria-label="Toggle menu"
           >
+            {/* <img src={MenuIcon} alt="" className="text-white" /> */}
             <MenuIcon className="text-white" />
           </button>
 
