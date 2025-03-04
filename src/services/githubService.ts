@@ -56,6 +56,10 @@ export const fetchLangStruct = async (owner: string, repo: string) => {
     };
   } catch (error) {
     console.log("Error fetching repo info", error);
+    return {
+      languages: {},
+      structure: [],
+    };
   }
 };
 
@@ -99,7 +103,7 @@ export const getImportantFiles = async (
         (item: any) => item.type === "blob" && extensionRegex.test(item.path)
       )
       .map(async (item) => {
-        const content = await getFileContent(owner, repo, item.path);
+        const content = await getFileContent(owner, repo, item.path || "");
         return {
           name: item.path.split("/").pop() || "",
           path: item.path,
@@ -111,7 +115,7 @@ export const getImportantFiles = async (
     return await Promise.all(filePromises);
   } catch (error) {
     console.error("Error fetching important files:", error);
-    throw new Error("Failed to fetch important files");
+    return [];
   }
 };
 

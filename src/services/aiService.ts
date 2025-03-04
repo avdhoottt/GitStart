@@ -1,5 +1,4 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { useRepo } from "../context/useInput";
 
 const api = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API);
 const model = api.getGenerativeModel({
@@ -9,10 +8,13 @@ const model = api.getGenerativeModel({
 interface RepoStrcutureInput {
   languages: Record<string, number>;
   structure: Array<{
-    name: string;
-    type: string;
-    path: string;
-    sha: string;
+    name?: string;
+    type?: string;
+    path?: string;
+    sha?: string;
+    mode?: string;
+    size?: number;
+    url?: string;
   }>;
 }
 
@@ -21,7 +23,7 @@ export const fetchAIResponse = async (prompt: string) => {
     const result = await model.generateContent(prompt);
     return result.response.text();
   } catch (error) {
-    throw new Error("AI response fetching failed");
+    console.error("AI response fetching failed", error);
   }
 };
 
@@ -57,6 +59,7 @@ export const generatePromptExtensions = async (
     throw new Error("Invalid repsonse format");
   } catch (error) {
     console.error("Error parsing AI response:", error);
+    return [];
   }
 };
 
