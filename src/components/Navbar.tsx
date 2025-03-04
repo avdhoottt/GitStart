@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import LoginButton from "./LoginButton";
 import { useAuth } from "../context/AuthContext";
 import UserProfile from "./UserProfile";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -14,6 +14,30 @@ const Navbar = () => {
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+  const scrollToSection = (sectionId: any) => {
+    // Close mobile menu if open
+    if (isMenuOpen) {
+      setIsMenuOpen(false);
+    }
+
+    // If we're not on the homepage, navigate there first
+    if (location.pathname !== "/") {
+      navigate("/");
+      // Wait a bit for navigation to complete
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100);
+    } else {
+      // Already on homepage, just scroll
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    }
   };
 
   return (
@@ -43,20 +67,25 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <nav className="gap-6 items-center hidden sm:flex">
-            <a href="#" className="text-white/60 hover:text-white transition">
-              About
-            </a>
-            <a href="#" className="text-white/60 hover:text-white transition">
+            {currentUser && (
+              <Link
+                to="/dashboard"
+                className="text-white/60 hover:text-white transition"
+              >
+                Dashboard
+              </Link>
+            )}
+            <a
+              onClick={() => scrollToSection("features")}
+              className="text-white/60 hover:text-white transition"
+            >
               Features
             </a>
-            <a href="#" className="text-white/60 hover:text-white transition">
-              Updates
-            </a>
-            <a href="#" className="text-white/60 hover:text-white transition">
-              Help
-            </a>
-            <a href="#" className="text-white/60 hover:text-white transition">
-              Customers
+            <a
+              onClick={() => scrollToSection("faq")}
+              className="text-white/60 hover:text-white transition"
+            >
+              FAQs
             </a>
             {isLoginLoading ? (
               <div className="h-10 w-10 rounded-full bg-gray-800 animate-pulse"></div>
@@ -83,34 +112,22 @@ const Navbar = () => {
               <div className="py-4 px-2 border-t border-white/10">
                 <div className="flex flex-col space-y-4">
                   <a
-                    href="#"
+                    onClick={() => scrollToSection("home")}
                     className="text-white/60 hover:text-white transition py-2"
                   >
-                    About
+                    Home
                   </a>
                   <a
-                    href="#"
+                    onClick={() => scrollToSection("features")}
                     className="text-white/60 hover:text-white transition py-2"
                   >
                     Features
                   </a>
                   <a
-                    href="#"
+                    onClick={() => scrollToSection("faq")}
                     className="text-white/60 hover:text-white transition py-2"
                   >
-                    Updates
-                  </a>
-                  <a
-                    href="#"
-                    className="text-white/60 hover:text-white transition py-2"
-                  >
-                    Help
-                  </a>
-                  <a
-                    href="#"
-                    className="text-white/60 hover:text-white transition py-2"
-                  >
-                    Customers
+                    FAQs
                   </a>
                   {isLoginLoading ? (
                     <div className="h-10 w-full bg-gray-800 animate-pulse rounded-lg"></div>

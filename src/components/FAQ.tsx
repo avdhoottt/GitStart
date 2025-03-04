@@ -1,7 +1,6 @@
 import { useState } from "react";
-import Plus from "../assets/icons/plus.svg";
-import Minus from "../assets/icons/minus.svg";
 import { motion, AnimatePresence } from "framer-motion";
+import { Plus, Minus } from "lucide-react";
 
 const items = [
   {
@@ -42,7 +41,11 @@ const AccordionItem = ({
     >
       <div className="flex items-center ">
         <span className="flex-1 text-lg font-bold">{questions}</span>
-        {isOpen ? <Minus /> : <Plus />}
+        {isOpen ? (
+          <Minus size={24} color="white" strokeWidth={2} />
+        ) : (
+          <Plus size={24} color="white" strokeWidth={2} />
+        )}
       </div>
       <AnimatePresence>
         {isOpen && (

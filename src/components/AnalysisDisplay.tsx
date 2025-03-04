@@ -284,6 +284,11 @@ const AnalysisDisplay = () => {
                       {children}
                     </h3>
                   ),
+                  h4: ({ children }) => (
+                    <h3 className="text-md font-bold mt-5 mb-3 text-white">
+                      {children}
+                    </h3>
+                  ),
                   ul: ({ children }) => (
                     <ul className="list-disc pl-6 mb-4 space-y-2 text-gray-300">
                       {children}
