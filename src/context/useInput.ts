@@ -4,7 +4,7 @@ import { createContext, useContext } from "react";
 // Define types for repository files
 interface RepoFile {
   name: string;
-  path: string;
+  path: string | undefined;
   type: string;
   content?: string;
 }

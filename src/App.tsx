@@ -9,7 +9,7 @@ import Dashboard from "./pages/Dashboard";
 
 interface RepoFile {
   name: string;
-  path: string;
+  path: string | undefined;
   type: string;
   content?: string;
 }
