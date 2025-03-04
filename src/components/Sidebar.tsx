@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRepo } from "../context/useInput";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
@@ -24,8 +24,7 @@ interface AnalysisHistoryItem {
 
 const Sidebar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const { analysisHistory, setAnalysisHistory, analysis, setAnalysis } =
-    useRepo();
+  const { analysisHistory, setAnalysisHistory, setAnalysis } = useRepo();
   const { currentUser } = useAuth();
   const { owner, repoName } = useParams();
   const navigate = useNavigate();

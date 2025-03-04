@@ -2,11 +2,12 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { logOut } from "../auth/firebase";
 import { getUserProfile } from "../services/githubService";
+import { useRepo } from "../context/useInput";
 
 const UserProfile = () => {
   const { currentUser, githubToken } = useAuth();
   const [profile, setProfile] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const { setIsLoading } = useRepo();
   const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {

@@ -1,4 +1,3 @@
-import Eco from "../assets/icons/ecosystem.svg";
 import Feature from "./Feature";
 
 const Features = () => {

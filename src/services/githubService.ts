@@ -16,21 +16,9 @@ interface RepoFile {
   content?: string;
 }
 
-interface RepoStructure {
-  languages: Record<string, number>;
-  structure: Array<{
-    path: string;
-    type: string;
-    sha: string;
-  }>;
-}
-
 const octokit = getOctokit();
 
-export const fetchLangStruct = async (
-  owner: string,
-  repo: string
-): Promise<RepoStructure> => {
+export const fetchLangStruct = async (owner: string, repo: string) => {
   try {
     const { data: languages } = await octokit.request(
       "GET /repos/{owner}/{repo}/languages",
@@ -87,7 +75,7 @@ export const getFileContent = async (
     }
     return null;
   } catch (error) {
-    throw new Error("File not decoded");
+    throw new Error("File not decoded", error);
     return null;
   }
 };

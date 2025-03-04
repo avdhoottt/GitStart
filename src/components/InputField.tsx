@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { useRepo } from "../context/useInput";
 
 const InputField = () => {

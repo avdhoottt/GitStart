@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useRepo } from "../context/useInput";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -12,22 +12,10 @@ import {
   query,
   where,
   getDocs,
-  orderBy,
   getFirestore,
-  getDoc,
-  doc,
 } from "firebase/firestore";
 import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
-
-// History item type
-interface AnalysisHistoryItem {
-  id: string;
-  repoName: string;
-  owner: string;
-  date: string;
-  isActive: boolean;
-}
 
 const AnalysisDisplay = () => {
   const {
@@ -35,7 +23,6 @@ const AnalysisDisplay = () => {
     analysis,
     isLoading,
     setAnalysis,
-    setRepoData,
     setIsLoading,
     error,
     setError,
@@ -45,18 +32,14 @@ const AnalysisDisplay = () => {
   const navigate = useNavigate();
   const db = getFirestore();
 
-  // Load analysis data when component mounts or params change
   useEffect(() => {
     const loadAnalysisData = async () => {
       if (!owner || !repoName || !currentUser) return;
-
-      // If we already have analysis data, no need to fetch again
       if (analysis && repoData) return;
 
       setIsLoading(true);
 
       try {
-        // Try to find this repo in history first
         const historyRef = collection(db, "analysisHistory");
         const q = query(
           historyRef,
@@ -68,7 +51,6 @@ const AnalysisDisplay = () => {
         const querySnapshot = await getDocs(q);
 
         if (!querySnapshot.empty) {
-          // Found in history, use the stored analysis
           const historyItem = querySnapshot.docs[0].data();
           if (historyItem.analysisContent) {
             console.log("Loaded analysis from history");
@@ -77,8 +59,6 @@ const AnalysisDisplay = () => {
             return;
           }
         }
-
-        // If we can't load from history, redirect to home to start a new analysis
         navigate("/");
         setIsLoading(false);
       } catch (error) {
@@ -91,13 +71,11 @@ const AnalysisDisplay = () => {
     loadAnalysisData();
   }, [owner, repoName, currentUser, analysis, repoData]);
 
-  // Save the current analysis to history
   useEffect(() => {
     const saveToHistory = async () => {
       if (!currentUser || !owner || !repoName || !analysis || isLoading) return;
 
       try {
-        // Check if this repository analysis already exists
         const historyRef = collection(db, "analysisHistory");
         const q = query(
           historyRef,
@@ -108,7 +86,6 @@ const AnalysisDisplay = () => {
 
         const querySnapshot = await getDocs(q);
 
-        // Only add if it doesn't exist
         if (querySnapshot.empty) {
           await addDoc(collection(db, "analysisHistory"), {
             userId: currentUser.uid,
@@ -210,11 +187,8 @@ const AnalysisDisplay = () => {
   return (
     <div className="min-h-screen bg-gray-950">
       <Navbar />
-
-      {/* Sidebar is included but doesn't need a wrapper div */}
       <Sidebar />
 
-      {/* Main content with proper padding on larger screens */}
       <main className="p-4 pt-6 lg:p-8 lg:ml-72 transition-all duration-300">
         <div className="max-w-4xl mx-auto">
           <div className="mb-6">

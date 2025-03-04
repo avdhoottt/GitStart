@@ -26,7 +26,7 @@ interface RepoContextType {
   setAnalysisHistory: (data: HistoryContextType[] | null) => void;
   setRepoData: (data: RepoFile[] | null) => void;
   analysis: string;
-  setAnalysis: (analysis: RepoFile[]) => void;
+  setAnalysis: (analysis: string) => void;
   isLoading: boolean;
   setIsLoading: (loading: boolean) => void;
   error: string | null;

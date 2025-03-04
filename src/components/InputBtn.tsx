@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRepo } from "../context/useInput";
 import ExtractRepoInfo from "../utils/ExtractRepoInfo";
 import { fetchLangStruct, getImportantFiles } from "../services/githubService";
@@ -10,14 +10,13 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 const InputBtn = ({ className = "", label = "Analyze" }) => {
-  const { repo, repoData, setRepoData, setAnalysis, isLoading, setIsLoading } =
-    useRepo();
+  const { repo, setRepoData, setAnalysis, isLoading, setIsLoading } = useRepo();
   const { currentUser } = useAuth();
   const [showLoginMessage, setShowLoginMessage] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    let timer;
+    let timer: any;
     if (showLoginMessage) {
       timer = setTimeout(() => {
         setShowLoginMessage(false);
@@ -45,15 +44,13 @@ const InputBtn = ({ className = "", label = "Analyze" }) => {
         repoName,
         extensions
       );
-      console.log(Importantfiles);
       setRepoData(Importantfiles);
       const analysis = await generatePromptAnalysis(Importantfiles);
       setAnalysis(analysis);
-      console.log(analysis);
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
-      throw new Error("There's not data");
+      throw new Error("There's not data", error);
     }
   };
 
