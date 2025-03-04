@@ -1,3 +1,4 @@
+import InputBtn from "../components/InputBtn";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 
@@ -5,7 +6,13 @@ const Dashboard = () => {
   return (
     <div>
       <Navbar />
-      <Sidebar />
+      <div className="container flex">
+        <Sidebar />
+        <div>
+          {/* <InputBtn />
+          <InputBtn /> */}
+        </div>
+      </div>
     </div>
   );
 };

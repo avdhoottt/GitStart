@@ -64,7 +64,11 @@ const Hero = () => {
           </p>
         </div>
         <div className="flex flex-col p-4 justify-center items-center gap-4 mt-8 sm:flex-row">
-          <InputField />
+          <InputField
+            className="w-full px-5 py-3 text-white bg-white/10 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-white/50 transition-colors"
+            type="text"
+            placeholder="Enter your Github URL"
+          />
           <InputBtn
             className="bg-white text-black py-3 px-5 rounded-lg font-medium sm:h-16"
             label="Analyze"

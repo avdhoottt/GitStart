@@ -16,15 +16,8 @@ const Navbar = () => {
     setIsMenuOpen(!isMenuOpen);
   };
   const scrollToSection = (sectionId: any) => {
-    // Close mobile menu if open
-    if (isMenuOpen) {
-      setIsMenuOpen(false);
-    }
-
-    // If we're not on the homepage, navigate there first
     if (location.pathname !== "/") {
       navigate("/");
-      // Wait a bit for navigation to complete
       setTimeout(() => {
         const element = document.getElementById(sectionId);
         if (element) {
@@ -32,7 +25,6 @@ const Navbar = () => {
         }
       }, 100);
     } else {
-      // Already on homepage, just scroll
       const element = document.getElementById(sectionId);
       if (element) {
         element.scrollIntoView({ behavior: "smooth" });
