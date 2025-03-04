@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { useRepo } from "../context/useInput";
 import ReactMarkdown from "react-markdown";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { nightOwl } from "react-syntax-highlighter/dist/esm/styles/prism";
+// import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+// import nightOwl from "react-syntax-highlighter/dist/esm/styles/prism/night-owl";
 import remarkGfm from "remark-gfm";
 import Navbar from "./Navbar";
 import { useAuth } from "../context/AuthContext";
@@ -225,7 +225,7 @@ const AnalysisDisplay = () => {
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 components={{
-                  code({ className, children, ...props }) {
+                  code({ className, children }) {
                     const match = /language-(\w+)/.exec(className || "");
                     return match ? (
                       <div className="my-4 rounded-lg overflow-hidden">
@@ -242,21 +242,14 @@ const AnalysisDisplay = () => {
                             Copy
                           </button>
                         </div>
-                        <SyntaxHighlighter
-                          style={nightOwl}
-                          language={match[1]}
-                          PreTag="div"
-                          customStyle={{ margin: 0, borderRadius: 0 }}
-                          {...props}
-                        >
-                          {String(children).replace(/\n$/, "")}
-                        </SyntaxHighlighter>
+                        <pre className="bg-gray-900 p-4 overflow-x-auto">
+                          <code className="font-mono text-sm text-gray-300">
+                            {String(children).replace(/\n$/, "")}
+                          </code>
+                        </pre>
                       </div>
                     ) : (
-                      <code
-                        className="bg-gray-800 px-1.5 py-0.5 rounded text-sm font-mono text-purple-300"
-                        {...props}
-                      >
+                      <code className="bg-gray-800 px-1.5 py-0.5 rounded text-sm font-mono text-purple-300">
                         {children}
                       </code>
                     );

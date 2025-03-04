@@ -1,6 +1,6 @@
 import { useState } from "react";
 import logoImage from "../assets/images/logosaas.png";
-import MenuIcon from "../assets/icons/menu.svg";
+import { Menu } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import LoginButton from "./LoginButton";
 import { useAuth } from "../context/AuthContext";
@@ -38,7 +38,7 @@ const Navbar = () => {
             aria-label="Toggle menu"
           >
             {/* <img src={MenuIcon} alt="" className="text-white" /> */}
-            <MenuIcon className="text-white" />
+            <Menu size={24} color="white" />
           </button>
 
           {/* Desktop Navigation */}

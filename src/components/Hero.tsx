@@ -1,4 +1,4 @@
-import Arrow from "../assets/icons/arrow-w.svg";
+import { ArrowRight } from "lucide-react";
 import Cursor from "../assets/images/cursor.png";
 import Message from "../assets/images/message.png";
 import { motion } from "framer-motion";
@@ -20,7 +20,7 @@ const Hero = () => {
             </span>
             <span className="inline-flex items-center gap-1">
               <span></span>
-              <Arrow />
+              <ArrowRight size={16} color="white" />
             </span>
           </a>
         </div>

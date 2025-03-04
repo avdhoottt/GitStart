@@ -1,6 +1,4 @@
-import INsta from "../assets/icons/insta.svg";
-import Xsocial from "../assets/icons/x-social.svg";
-import YouTube from "../assets/icons/youtube.svg";
+import { Instagram, Youtube, Twitter } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -12,13 +10,13 @@ const Footer = () => {
           </div>
           <ul className="flex justify-center gap-2.5">
             <li>
-              <INsta />
+              <Instagram size={24} color="white" strokeWidth={2} />
             </li>
             <li>
-              <YouTube />
+              <Youtube size={24} color="white" strokeWidth={2} />
             </li>
             <li>
-              <Xsocial />
+              <Twitter size={24} color="white" strokeWidth={2} />
             </li>
           </ul>
         </div>

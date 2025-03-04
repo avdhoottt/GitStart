@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import Eco from "../assets/icons/ecosystem.svg";
+import { Compass } from "lucide-react";
 import { motion, useMotionTemplate, useMotionValue } from "framer-motion";
 
 const Feature = ({
@@ -39,7 +39,7 @@ const Feature = ({
         ref={border}
       ></motion.div>
       <div className="inline-flex h-14 w-14 bg-white text-black justify-center items-center rounded-lg">
-        <Eco />
+        <Compass size={28} />
       </div>
       <h3 className="mt-6 font-bold">{title}</h3>
       <p className="mt-2 text-white/70">{description}</p>
