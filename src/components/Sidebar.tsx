@@ -32,7 +32,7 @@ const Sidebar = () => {
   // To track scroll position
   const [scrollPosition, setScrollPosition] = useState(0);
   const navbarRef = useRef<HTMLElement | null>(null);
-  const [navbarHeight, setNavbarHeight] = useState(10); // Default height
+  const [navbarHeight, setNavbarHeight] = useState(90); // Default height
 
   useEffect(() => {
     // Find the navbar element
@@ -123,13 +123,14 @@ const Sidebar = () => {
     }
   };
 
-  // Calculate sidebar position based on scroll and navbar
   const getSidebarStyle = () => {
+    const topPosition = navbarHeight + 50;
     const isNavbarVisible = scrollPosition < navbarHeight;
 
     return {
-      top: isNavbarVisible ? `${navbarHeight}px` : "0px",
-      height: isNavbarVisible ? `calc(100vh - ${navbarHeight}px)` : "100vh",
+      top: isNavbarVisible ? `${topPosition}px` : "0px",
+      height: isNavbarVisible ? `calc(100vh - ${topPosition}px)` : "100vh",
+      position: "fixed",
     };
   };
 
