@@ -49,7 +49,7 @@ const Navbar = () => {
             <div className="absolute w-full top-2 bottom-0 bg-gradient-to-r"></div>
             <img
               src={logoImage}
-              className="h-12 w-12 relative"
+              className="h-12 w-12 relative cursor-pointer"
               alt="Logo"
               onClick={() => navigate("/")}
             />

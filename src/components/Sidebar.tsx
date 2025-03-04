@@ -124,14 +124,14 @@ const Sidebar = () => {
   };
 
   const getSidebarStyle = () => {
-    const topPosition = navbarHeight + 50;
+    const topPosition = navbarHeight + 46;
     const isNavbarVisible = scrollPosition < navbarHeight;
 
     return {
       top: isNavbarVisible ? `${topPosition}px` : "0px",
       height: isNavbarVisible ? `calc(100vh - ${topPosition}px)` : "100vh",
       position: "fixed",
-    };
+    } as React.CSSProperties;
   };
 
   return (
