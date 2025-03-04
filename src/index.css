@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+@layer utilities {
+  .rainbow-gradient {
+    background: linear-gradient(
+      to right,
+      #fde7ff 10%,
+      #b3eaff 30%,
+      #fff8b3 50%,
+      #fbc6d8 70%,
+      #fde7ff 90%
+    );
+  }
+
+  .hero-gradient {
+    background: linear-gradient(
+      to bottom,
+      #000 10%,
+      #200d42 34%,
+      #4f21a1 65%,
+      #a46edb 82%
+    );
+  }
+
+  .link-gradient {
+    background: linear-gradient(
+      to right,
+      #f87aff,
+      #fb93d0,
+      #ffdd99,
+      #c3f0b2,
+      #2fd8fe
+    );
+    [-webkit-background-clip:text]
+  }
+}
