@@ -1,5 +1,3 @@
-import { Instagram, Youtube, Twitter } from "lucide-react";
-
 const Footer = () => {
   return (
     <footer className="py-5 bg-black text-white/60 border-t border-right/20">
