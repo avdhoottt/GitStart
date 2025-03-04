@@ -46,7 +46,7 @@ const InputBtn = ({ className = "", label = "Analyze" }) => {
       );
       setRepoData(Importantfiles);
       const analysis = await generatePromptAnalysis(Importantfiles);
-      setAnalysis(analysis);
+      setAnalysis(analysis || "");
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);

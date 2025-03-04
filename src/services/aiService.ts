@@ -52,7 +52,7 @@ export const generatePromptExtensions = async (
   try {
     const response = await fetchAIResponse(prompt);
 
-    const extensions = JSON.parse(response);
+    const extensions = JSON.parse(response || "");
     if (Array.isArray(extensions)) {
       return extensions;
     }

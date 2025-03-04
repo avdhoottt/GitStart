@@ -11,7 +11,7 @@ const getOctokit = () => {
 
 interface RepoFile {
   name: string;
-  path: string;
+  path: string | undefined;
   type: string;
   content?: string;
 }
@@ -105,7 +105,7 @@ export const getImportantFiles = async (
       .map(async (item) => {
         const content = await getFileContent(owner, repo, item.path || "");
         return {
-          name: item.path.split("/").pop() || "",
+          name: item.path?.split("/").pop() || "",
           path: item.path,
           type: "file",
           content: content || undefined,
