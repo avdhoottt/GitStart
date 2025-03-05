@@ -1,7 +1,5 @@
-// context/useInput.ts
 import { createContext, useContext } from "react";
 
-// Define types for repository files
 interface RepoFile {
   name: string;
   path: string | undefined;
@@ -17,11 +15,12 @@ interface HistoryContextType {
   isActive: boolean;
 }
 
-// Define the shape of your context
 interface RepoContextType {
   repo: string;
   setRepo: (url: string) => void;
   repoData: RepoFile[] | null;
+  resetClicked: boolean;
+  setResetClicked: (value: boolean) => void;
   analysisHistory: HistoryContextType[] | null;
   setAnalysisHistory: (data: HistoryContextType[] | null) => void;
   setRepoData: (data: RepoFile[] | null) => void;
@@ -33,7 +32,6 @@ interface RepoContextType {
   setError: (error: string | null) => void;
 }
 
-// Create context with default values
 export const RepoContext = createContext<RepoContextType>({
   repo: "",
   setRepo: () => {},
@@ -41,6 +39,8 @@ export const RepoContext = createContext<RepoContextType>({
   analysisHistory: null,
   setAnalysisHistory: () => {},
   setRepoData: () => {},
+  resetClicked: false,
+  setResetClicked: () => {},
   analysis: "",
   setAnalysis: () => {},
   isLoading: false,
@@ -49,7 +49,6 @@ export const RepoContext = createContext<RepoContextType>({
   setError: () => {},
 });
 
-// Create custom hook for using the context
 export const useRepo = () => {
   const context = useContext(RepoContext);
   if (!context) {
@@ -58,5 +57,4 @@ export const useRepo = () => {
   return context;
 };
 
-// Export the Provider for wrapping the app
 export const RepoProvider = RepoContext.Provider;

@@ -29,13 +29,11 @@ const Sidebar = () => {
   const { owner, repoName } = useParams();
   const navigate = useNavigate();
 
-  // To track scroll position
   const [scrollPosition, setScrollPosition] = useState(0);
   const navbarRef = useRef<HTMLElement | null>(null);
-  const [navbarHeight, setNavbarHeight] = useState(90); // Default height
+  const [navbarHeight, setNavbarHeight] = useState(90);
 
   useEffect(() => {
-    // Find the navbar element
     navbarRef.current =
       document.querySelector("nav") || document.querySelector(".navbar");
 
@@ -44,7 +42,6 @@ const Sidebar = () => {
       setNavbarHeight(height);
     }
 
-    // Set up scroll listener
     const handleScroll = () => {
       setScrollPosition(window.scrollY);
     };
@@ -136,7 +133,6 @@ const Sidebar = () => {
 
   return (
     <>
-      {/* Sidebar toggle button - fixed position */}
       <button
         className="sm:hidden md:hidden fixed z-50 bottom-6 right-6 bg-purple-600 hover:bg-purple-700 text-white p-3 rounded-full shadow-lg transition-colors duration-200"
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -160,7 +156,6 @@ const Sidebar = () => {
         </svg>
       </button>
 
-      {/* Sidebar - with dynamic positioning based on scroll */}
       <div
         className={`fixed left-0 z-40 w-72 bg-gray-900 border-r border-purple-900/30 transition-all duration-300 shadow-xl backdrop-blur-lg overflow-y-auto ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
@@ -253,7 +248,6 @@ const Sidebar = () => {
         </div>
       </div>
 
-      {/* Overlay to close sidebar on mobile when clicking outside */}
       {isSidebarOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-30 lg:hidden"

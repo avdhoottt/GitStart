@@ -4,7 +4,7 @@ import ExtractRepoInfo from "../utils/ExtractRepoInfo";
 import { fetchLangStruct, getImportantFiles } from "../services/githubService";
 import {
   generatePromptAnalysis,
-  generatePromptExtensions,
+  getImportantFilePaths,
 } from "../services/aiService";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -35,20 +35,26 @@ const InputBtn = ({ className = "", label = "Analyze" }) => {
 
     try {
       const { owner, repo: repoName } = ExtractRepoInfo(repo);
-      navigate(`/${owner}/${repoName}`);
+
       const repoInfo = await fetchLangStruct(owner, repoName);
-      const extensions = await generatePromptExtensions(repoInfo);
-      console.log(extensions);
-      const Importantfiles = await getImportantFiles(
+      const importantFilePaths = await getImportantFilePaths(repoInfo);
+      console.log("Important files:", importantFilePaths);
+
+      const importantFiles = await getImportantFiles(
         owner,
         repoName,
-        extensions
+        importantFilePaths
       );
-      setRepoData(Importantfiles);
-      const analysis = await generatePromptAnalysis(Importantfiles);
+      setRepoData(importantFiles);
+
+      const analysis = await generatePromptAnalysis(importantFiles);
       setAnalysis(analysis || "");
-      console.log(analysis);
-      setIsLoading(false);
+
+      navigate(`/${owner}/${repoName}`);
+
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 300);
     } catch (error) {
       setIsLoading(false);
       console.error("There's no data", error);
@@ -57,6 +63,16 @@ const InputBtn = ({ className = "", label = "Analyze" }) => {
 
   return (
     <div className="relative">
+      {isLoading && (
+        <div className="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center">
+          <div className="text-center text-white p-6 rounded-lg">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500 mx-auto mb-4"></div>
+            <p className="text-lg font-medium">Analyzing repository...</p>
+            <p className="text-sm text-gray-400 mt-2">This may take a moment</p>
+          </div>
+        </div>
+      )}
+
       <button
         className={`${className}`}
         onClick={handleAnalyse}

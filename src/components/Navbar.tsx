@@ -1,5 +1,5 @@
 import { useState } from "react";
-import logoImage from "../assets/images/logosaas.png";
+import logoImage from "../assets/images/sass-logo-1.png";
 import { Menu } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import LoginButton from "./LoginButton";
@@ -47,17 +47,14 @@ const Navbar = () => {
             />
           </div>
 
-          {/* Mobile Menu Button */}
           <button
             className="border border-white border-opacity-30 h-10 w-10 inline-flex justify-center items-center rounded-lg sm:hidden"
             onClick={toggleMenu}
             aria-label="Toggle menu"
           >
-            {/* <img src={MenuIcon} alt="" className="text-white" /> */}
             <Menu size={24} color="white" />
           </button>
 
-          {/* Desktop Navigation */}
           <nav className="gap-6 items-center hidden sm:flex">
             {currentUser && (
               <Link
@@ -103,12 +100,12 @@ const Navbar = () => {
             >
               <div className="py-4 px-2 border-t border-white/10">
                 <div className="flex flex-col space-y-4">
-                  <a
-                    onClick={() => scrollToSection("home")}
+                  <Link
+                    to={"/dashboard"}
                     className="text-white/60 hover:text-white transition py-2"
                   >
-                    Home
-                  </a>
+                    Dashboard
+                  </Link>
                   <a
                     onClick={() => scrollToSection("features")}
                     className="text-white/60 hover:text-white transition py-2"
@@ -148,7 +145,7 @@ const Navbar = () => {
                         }
                         className="w-full bg-gray-700 py-2 px-4 rounded-lg text-white"
                       >
-                        Sign Out
+                        <Link to={"/"}>Sign Out</Link>
                       </button>
                     </div>
                   ) : (

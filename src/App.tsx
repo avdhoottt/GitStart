@@ -1,4 +1,3 @@
-// App.tsx
 import { useState } from "react";
 import { RepoProvider } from "./context/useInput";
 import AuthProvider from "./context/AuthContext";
@@ -28,6 +27,7 @@ function App() {
   const [analysisHistory, setAnalysisHistory] = useState<
     HistoryContextType[] | null
   >(null);
+  const [resetClicked, setResetClicked] = useState<boolean>(false);
   const [analysis, setAnalysis] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -43,6 +43,8 @@ function App() {
             setRepoData,
             analysis,
             setAnalysis,
+            resetClicked,
+            setResetClicked,
             analysisHistory,
             setAnalysisHistory,
             isLoading,

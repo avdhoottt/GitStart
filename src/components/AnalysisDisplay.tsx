@@ -1,8 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRepo } from "../context/useInput";
 import ReactMarkdown from "react-markdown";
-// import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-// import nightOwl from "react-syntax-highlighter/dist/esm/styles/prism/night-owl";
 import remarkGfm from "remark-gfm";
 import Navbar from "./Navbar";
 import { useAuth } from "../context/AuthContext";
@@ -16,6 +14,7 @@ import {
 } from "firebase/firestore";
 import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
+import Reset from "./Reset";
 
 const AnalysisDisplay = () => {
   const {
@@ -27,17 +26,35 @@ const AnalysisDisplay = () => {
     error,
     setError,
   } = useRepo();
+  const [localIsLoading, setLocalIsLoading] = useState(true);
   const { currentUser } = useAuth();
   const { owner, repoName } = useParams();
   const navigate = useNavigate();
   const db = getFirestore();
 
   useEffect(() => {
+    if (isLoading) {
+      setLocalIsLoading(true);
+    } else {
+      const timer = setTimeout(() => {
+        setLocalIsLoading(!analysis);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  useEffect(() => {
     const loadAnalysisData = async () => {
       if (!owner || !repoName || !currentUser) return;
-      if (analysis && repoData) return;
+      if (localIsLoading) {
+        console.log("Reset in progress, skipping database load");
+        return;
+      }
 
-      setIsLoading(true);
+      if (analysis && repoData) {
+        setLocalIsLoading(false);
+        return;
+      }
 
       try {
         const historyRef = collection(db, "analysisHistory");
@@ -55,15 +72,21 @@ const AnalysisDisplay = () => {
           if (historyItem.analysisContent) {
             console.log("Loaded analysis from history");
             setAnalysis(historyItem.analysisContent);
+            setLocalIsLoading(false);
             setIsLoading(false);
             return;
           }
         }
-        navigate("/");
+        if (!analysis) {
+          navigate("/");
+        }
+
+        setLocalIsLoading(false);
         setIsLoading(false);
       } catch (error) {
         console.error("Error loading analysis data:", error);
         setError("Failed to load repository analysis. Please try again.");
+        setLocalIsLoading(false);
         setIsLoading(false);
       }
     };
@@ -73,7 +96,8 @@ const AnalysisDisplay = () => {
 
   useEffect(() => {
     const saveToHistory = async () => {
-      if (!currentUser || !owner || !repoName || !analysis || isLoading) return;
+      if (!currentUser || !owner || !repoName || !analysis || localIsLoading)
+        return;
 
       try {
         const historyRef = collection(db, "analysisHistory");
@@ -101,9 +125,9 @@ const AnalysisDisplay = () => {
     };
 
     saveToHistory();
-  }, [currentUser, owner, repoName, analysis, isLoading]);
+  }, [currentUser, owner, repoName, analysis, localIsLoading]);
 
-  if (isLoading) {
+  if (localIsLoading) {
     return (
       <div className="min-h-screen flex flex-col bg-gray-950">
         <Navbar />
@@ -340,6 +364,13 @@ const AnalysisDisplay = () => {
               >
                 {analysis}
               </ReactMarkdown>
+            </div>
+            <div className="flex justify-center items-center p-3">
+              <Reset
+                className="bg-white text-black py-3 px-3 rounded-lg font-medium cursor-pointer"
+                parentLoading={localIsLoading}
+                setParentLoading={setLocalIsLoading}
+              />
             </div>
           </div>
 

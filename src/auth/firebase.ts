@@ -2,6 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth, signInWithPopup, signOut } from "firebase/auth";
 import { GithubAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,

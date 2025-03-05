@@ -27,48 +27,127 @@ export const fetchAIResponse = async (prompt: string) => {
   }
 };
 
-export const generatePromptExtensions = async (
+export const getImportantFilePaths = async (
   repoInfo: RepoStrcutureInput
 ): Promise<string[]> => {
+  const availableFiles = repoInfo.structure
+    .filter((item) => item.type === "blob" && item.path)
+    .map((item) => item.path) as string[];
+
   const languagesList = Object.keys(repoInfo.languages).join(", ");
-  const fileList = repoInfo.structure
-    .filter((item) => item.type === "blob")
-    .map((item) => item.path)
-    .join("/n");
+
+  const totalFiles = availableFiles.length;
+  const sampleFiles = availableFiles.slice(0, 20).join("\n");
 
   const prompt = `Analyze this GitHub repository structure and its languages.
     Languages used: ${languagesList}
 
-    File structure:
-    ${fileList}
+    This repository has ${totalFiles} files. Here are some sample files to understand the structure:
+    ${sampleFiles}
 
-    Based on the languages used and file structure, provide an array of file extensions that would be important to understand for setting up this project and contributing to it. Remember, we are doing this because we don't want to fetch every file of the repo so try to give those extensions that are really important and those which contribute to setting up the repo. Like in a React project, we dont need all js, ts, jsx, and tsx files. we'll just need the .json, .md, .config.ts,.
+    Based on the languages used and file structure, provide the paths of up to 15 MOST IMPORTANT files that would give enough information to set up this repository locally and start contributing to it.
 
-    For example, if it's a JavaScript/TypeScript project, important extensions might include: ["json", "ts", "md", "env.example"].
+    Focus on:
+    1. Configuration files (package.json, tsconfig.json, .env.example, etc.)
+    2. Setup instructions (README.md, CONTRIBUTING.md)
+    3. Build scripts and dependency information
+    4. Core architecture files that explain the project structure
 
-    Respond ONLY with a JSON array of extensions without the dot prefix. For example:
-        ["md", "json", "yml"]. make sure to just give the array in string format like normal text response, don't give it in a code block: "["md", "json", "js", "yml"]"`.trim();
+    IMPORTANT:
+    - Respond with ONLY a JSON array of file paths WITHOUT any markdown formatting or explanation
+    - ONLY include files that are likely to exist - common files like README.md, CONTRIBUTING.md, package.json
+    - VERIFY your paths match the repository structure
+    - DO NOT include paths that contain directories like "ci/official/containers/" unless you're very confident they exist
+    - The response should be EXACTLY in this format: ["file1.md", "file2.json", "path/to/file3.js"]`.trim();
 
   try {
     const response = await fetchAIResponse(prompt);
-
-    const extensions = JSON.parse(response || "");
-    if (Array.isArray(extensions)) {
-      return extensions;
+    if (!response) {
+      throw new Error("Empty response from AI");
     }
-    throw new Error("Invalid repsonse format");
+
+    let cleanedResponse = response;
+    if (response.includes("```")) {
+      const match = response.match(/```(?:json)?\s*([\s\S]*?)```/);
+      if (match && match[1]) {
+        cleanedResponse = match[1].trim();
+      }
+    }
+
+    const filePaths = JSON.parse(cleanedResponse);
+
+    if (Array.isArray(filePaths)) {
+      const validatedPaths = filePaths.filter((path) => {
+        if (availableFiles.includes(path)) {
+          return true;
+        }
+
+        const lowerPath = path.toLowerCase();
+        return availableFiles.some((file) => file.toLowerCase() === lowerPath);
+      });
+
+      const essentialFiles = [
+        "README.md",
+        "CONTRIBUTING.md",
+        "LICENSE",
+        "package.json",
+        "setup.py",
+      ];
+      for (const file of essentialFiles) {
+        const exactMatch = availableFiles.find((f) => f === file);
+        const caseInsensitiveMatch = availableFiles.find(
+          (f) => f.toLowerCase() === file.toLowerCase()
+        );
+
+        const matchedFile = exactMatch || caseInsensitiveMatch;
+        if (matchedFile && !validatedPaths.includes(matchedFile)) {
+          validatedPaths.push(matchedFile);
+        }
+      }
+
+      console.log(
+        `AI suggested ${filePaths.length} files, ${validatedPaths.length} were validated to exist`
+      );
+      return validatedPaths.slice(0, 15);
+    }
+
+    throw new Error("Response is not an array");
   } catch (error) {
     console.error("Error parsing AI response:", error);
-    return [];
+    return [
+      "README.md",
+      "LICENSE",
+      "CONTRIBUTING.md",
+      "package.json",
+      "setup.py",
+      "requirements.txt",
+      "Makefile",
+      "CMakeLists.txt",
+      "WORKSPACE",
+      "BUILD",
+    ];
   }
 };
 
 export const generatePromptAnalysis = async (files: any[]) => {
-  const prompt = `Analyze this GitHub repository files, go through them, analyze and try to provide detailed documentation focused on:
+  const fileContents = files.map((file) => ({
+    name: file.name,
+    path: file.path,
+    content: file.content?.slice(0, 5000) || "Empty file",
+    status: file.status || "success",
+  }));
 
-1. Project Setup Guide
+  const prompt = `Analyze these GitHub repository files and provide detailed documentation focused on:
+
+  First write in detail:
+  - What the repository is about
+  - Where is it used
+  - Which people use it and where it has been used
+  - How the project can help
+
+1. Project Setup Guide(Try to make the steps sound simple and present them in a easier way that anyone could understand)
    - Complete system requirements and prerequisites (exact versions)
-   - Step-by-step installation instructions with all necessary commands (Incldue links to the things that needs to be installed wherever possible) Try to predict what the files indicate to install/set up.
+   - Step-by-step installation instructions with all necessary commands (Include links to the things that needs to be installed wherever possible)
    - Required environment variables and configuration files
    - Detailed troubleshooting for common setup errors
 
@@ -77,9 +156,11 @@ export const generatePromptAnalysis = async (files: any[]) => {
 
 Include any project-specific conventions, scripts, or tools that facilitate setup and contribution. Format as clear documentation with proper code blocks for commands.
 
-Repository data: ${JSON.stringify(files, null, 2)}
+Repository files: ${JSON.stringify(fileContents, null, 2)}
 
-Please provide a detailed, well-structured response. Give in markdown format but don't include the markdown tag \`\`\`markdown`;
+Note that some files might be listed as missing or not found due to API limitations. Please focus on the files you do have access to.
+
+Please provide a detailed, well-structured response in markdown format but dont incldue the \`\`\`markdown tag in the response. Act like you are an expert software developer trying to help others so don't add any lines like based on the files or here are the results or Based on the provided files or anything like that, just give them what they need and don't say any lines like a chatbot.`;
 
   const response = fetchAIResponse(prompt);
   return response;

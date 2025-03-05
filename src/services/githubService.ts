@@ -49,7 +49,7 @@ export const fetchLangStruct = async (owner: string, repo: string) => {
       tree_sha: commitSha,
       recursive: "true",
     });
-    //   console.log(languages, treeData.tree);
+
     return {
       languages,
       structure: treeData.tree,
@@ -79,7 +79,7 @@ export const getFileContent = async (
     }
     return null;
   } catch (error) {
-    console.error("File not decoded", error);
+    console.error(`File not decoded: ${path}`, error);
     return null;
   }
 };
@@ -87,32 +87,75 @@ export const getFileContent = async (
 export const getImportantFiles = async (
   owner: string,
   repo: string,
-  extensions: string[]
+  filePaths: string[]
 ): Promise<RepoFile[]> => {
   try {
-    // Get repo structure first
-    const { structure } = await fetchLangStruct(owner, repo);
-
-    // Create extension regex pattern
-    const extensionPattern = extensions.join("|").replace(/\./g, "\\.");
-    const extensionRegex = new RegExp(`\\.(${extensionPattern})$`, "i");
-
-    // Process files in parallel with Promise.all for better performance
-    const filePromises = structure
-      .filter(
-        (item: any) => item.type === "blob" && extensionRegex.test(item.path)
-      )
-      .map(async (item) => {
-        const content = await getFileContent(owner, repo, item.path || "");
+    const filePromises = filePaths.map(async (path) => {
+      try {
+        const content = await getFileContent(owner, repo, path);
         return {
-          name: item.path?.split("/").pop() || "",
-          path: item.path,
+          name: path.split("/").pop() || "",
+          path: path,
           type: "file",
           content: content || undefined,
+          status: content ? "success" : "empty",
         };
-      });
+      } catch (error) {
+        console.error(`Error fetching file: ${path}`, error);
+        return {
+          name: path.split("/").pop() || "",
+          path: path,
+          type: "file",
+          content: `// File not found: ${path}`,
+          status: "error",
+        };
+      }
+    });
 
-    return await Promise.all(filePromises);
+    const files = await Promise.all(filePromises);
+
+    const validFiles = files.filter((file) => file.content !== undefined);
+
+    if (validFiles.length === 0) {
+      console.warn(
+        "No valid files were found. Trying to fetch fallback files..."
+      );
+      const fallbackFiles = [
+        "README.md",
+        "package.json",
+        "setup.py",
+        "requirements.txt",
+        "Makefile",
+        "CMakeLists.txt",
+        "BUILD",
+        "WORKSPACE",
+        "Dockerfile",
+        ".github/workflows/main.yml",
+      ];
+
+      for (const fallbackPath of fallbackFiles) {
+        try {
+          const content = await getFileContent(owner, repo, fallbackPath);
+          if (content) {
+            validFiles.push({
+              name: fallbackPath.split("/").pop() || "",
+              path: fallbackPath,
+              type: "file",
+              content: content,
+              status: "fallback",
+            });
+          }
+        } catch (error) {
+          continue;
+        }
+      }
+    }
+
+    console.log(
+      `Retrieved ${validFiles.length} of ${filePaths.length} requested files`
+    );
+
+    return validFiles;
   } catch (error) {
     console.error("Error fetching important files:", error);
     return [];

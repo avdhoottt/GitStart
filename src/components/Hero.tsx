@@ -73,9 +73,6 @@ const Hero = () => {
             className="bg-white text-black py-3 px-5 rounded-lg font-medium sm:h-16"
             label="Analyze"
           />
-          {/* <button className="bg-white text-black py-3 px-5 rounded-lg font-medium sm:h-16">
-            Analyze
-          </button> */}
         </div>
       </div>
     </div>
