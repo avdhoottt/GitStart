@@ -19,7 +19,7 @@ const Reset = ({
   setParentLoading: (loading: boolean) => void;
   parentLoading: boolean;
 }) => {
-  const { setRepoData, setAnalysis, setIsLoading } = useRepo();
+  const { setRepoData, setAnalysis, setIsLoading, setResetClicked } = useRepo();
 
   const [isResetLoading] = useState(false);
   const { owner, repoName } = useParams();
@@ -27,6 +27,7 @@ const Reset = ({
 
   const handleReset = async () => {
     console.log("Reset button clicked");
+    setResetClicked(true);
 
     if (!owner || !repoName || isResetLoading) {
       console.log("Conditions not met:", {

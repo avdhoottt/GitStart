@@ -25,6 +25,7 @@ const AnalysisDisplay = () => {
     setIsLoading,
     error,
     setError,
+    resetClicked,
   } = useRepo();
   const [localIsLoading, setLocalIsLoading] = useState(true);
   const { currentUser } = useAuth();
@@ -46,7 +47,7 @@ const AnalysisDisplay = () => {
   useEffect(() => {
     const loadAnalysisData = async () => {
       if (!owner || !repoName || !currentUser) return;
-      if (localIsLoading) {
+      if (resetClicked) {
         console.log("Reset in progress, skipping database load");
         return;
       }
