@@ -15,10 +15,14 @@ import {
 import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Reset from "./Reset";
+import { analyzeRepo } from "../utils/analyzeRepo";
 
 const AnalysisDisplay = () => {
   const {
+    repo,
+    setRepo,
     repoData,
+    setRepoData,
     analysis,
     isLoading,
     setAnalysis,
@@ -79,7 +83,18 @@ const AnalysisDisplay = () => {
           }
         }
         if (!analysis) {
-          navigate("/");
+          console.log(`Started Analyzing ${repoName} for ${owner}`);
+          setIsLoading(true);
+          try {
+            const repo = `https://github.com/${owner}/${repoName}`;
+            setRepo(repo);
+            analyzeRepo(repo, setRepoData, setAnalysis, navigate, setIsLoading);
+
+            setIsLoading(false);
+          } catch (error) {
+            console.log(error);
+            setIsLoading(false);
+          }
         }
 
         setLocalIsLoading(false);

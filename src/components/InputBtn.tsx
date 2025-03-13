@@ -1,16 +1,28 @@
 import { useEffect, useState } from "react";
 import { useRepo } from "../context/useInput";
 import ExtractRepoInfo from "../utils/ExtractRepoInfo";
-import { fetchLangStruct, getImportantFiles } from "../services/githubService";
+import {
+  fetchIssues,
+  fetchLangStruct,
+  getImportantFiles,
+} from "../services/githubService";
 import {
   generatePromptAnalysis,
   getImportantFilePaths,
 } from "../services/aiService";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { analyzeRepo } from "../utils/analyzeRepo";
 
 const InputBtn = ({ className = "", label = "Analyze" }) => {
-  const { repo, setRepoData, setAnalysis, isLoading, setIsLoading } = useRepo();
+  const {
+    repo,
+    setRepoData,
+    setAnalysis,
+    isLoading,
+    setIsLoading,
+    setResetClicked,
+  } = useRepo();
   const { currentUser } = useAuth();
   const [showLoginMessage, setShowLoginMessage] = useState(false);
   const navigate = useNavigate();
@@ -31,34 +43,9 @@ const InputBtn = ({ className = "", label = "Analyze" }) => {
       return;
     }
     if (!repo || isLoading) return;
-    setIsLoading(true);
+    setResetClicked(false);
 
-    try {
-      const { owner, repo: repoName } = ExtractRepoInfo(repo);
-
-      const repoInfo = await fetchLangStruct(owner, repoName);
-      const importantFilePaths = await getImportantFilePaths(repoInfo);
-      console.log("Important files:", importantFilePaths);
-
-      const importantFiles = await getImportantFiles(
-        owner,
-        repoName,
-        importantFilePaths
-      );
-      setRepoData(importantFiles);
-
-      const analysis = await generatePromptAnalysis(importantFiles);
-      setAnalysis(analysis || "");
-
-      navigate(`/${owner}/${repoName}`);
-
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 300);
-    } catch (error) {
-      setIsLoading(false);
-      console.error("There's no data", error);
-    }
+    analyzeRepo(repo, setRepoData, setAnalysis, navigate, setIsLoading);
   };
 
   return (

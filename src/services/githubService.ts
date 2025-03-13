@@ -189,3 +189,23 @@ export const getUserRepos = async (perPage = 10, page = 1) => {
     throw error;
   }
 };
+
+// Fetch issues
+// export const fetchIssues = async (owner: string, repo: string) => {
+//   try {
+//     const issues = await octokit.request(
+//       "GET  / repos / { owner } / { repo } / issues",
+//       {
+//         owner,
+//         repo,
+//         headers: {
+//           "X-GitHub-Api-Version": "2022-11-28",
+//         },
+//       }
+//     );
+
+//     return issues;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
