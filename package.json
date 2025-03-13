@@ -12,6 +12,7 @@
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
     "@tailwindcss/vite": "^4.0.9",
+    "@vercel/analytics": "^1.5.0",
     "clsx": "^2.1.1",
     "firebase": "^11.4.0",
     "framer-motion": "^12.4.7",

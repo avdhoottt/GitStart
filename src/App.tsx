@@ -5,6 +5,7 @@ import HomePage from "./pages/HomePage";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import AnalysisDisplay from "./components/AnalysisDisplay";
 import Dashboard from "./pages/Dashboard";
+import { Analytics } from "@vercel/analytics/react";
 
 interface RepoFile {
   name: string;
@@ -53,6 +54,7 @@ function App() {
             setError,
           }}
         >
+          <Analytics />
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/:owner/:repoName" element={<AnalysisDisplay />} />
