@@ -1,15 +1,5 @@
 import { useEffect, useState } from "react";
 import { useRepo } from "../context/useInput";
-import ExtractRepoInfo from "../utils/ExtractRepoInfo";
-import {
-  fetchIssues,
-  fetchLangStruct,
-  getImportantFiles,
-} from "../services/githubService";
-import {
-  generatePromptAnalysis,
-  getImportantFilePaths,
-} from "../services/aiService";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { analyzeRepo } from "../utils/analyzeRepo";

@@ -19,7 +19,6 @@ import { analyzeRepo } from "../utils/analyzeRepo";
 
 const AnalysisDisplay = () => {
   const {
-    repo,
     setRepo,
     repoData,
     setRepoData,
