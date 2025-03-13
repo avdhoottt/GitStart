@@ -84,15 +84,20 @@ const AnalysisDisplay = () => {
         if (!analysis) {
           console.log(`Started Analyzing ${repoName} for ${owner}`);
           setIsLoading(true);
+          setLocalIsLoading(true);
           try {
             const repo = `https://github.com/${owner}/${repoName}`;
             setRepo(repo);
-            analyzeRepo(repo, setRepoData, setAnalysis, navigate, setIsLoading);
-
-            setIsLoading(false);
+            await analyzeRepo(
+              repo,
+              setRepoData,
+              setAnalysis,
+              navigate,
+              setIsLoading
+            );
+            setLocalIsLoading(false);
           } catch (error) {
             console.log(error);
-            setIsLoading(false);
           }
         }
 
@@ -189,7 +194,7 @@ const AnalysisDisplay = () => {
     );
   }
 
-  if (!analysis) {
+  if (!analysis && !localIsLoading && !isLoading) {
     return (
       <div className="min-h-screen flex flex-col bg-gray-950">
         <Navbar />
