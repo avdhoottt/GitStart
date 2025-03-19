@@ -165,7 +165,7 @@ const AnalysisDisplay = () => {
             const repo = `https://github.com/${owner}/${repoName}`;
             if (isMounted) setRepo(repo);
 
-            const result = await analyzeRepo(
+            await analyzeRepo(
               repo,
               (data: any) => {
                 if (isMounted) setRepoData(data);

@@ -40,7 +40,7 @@ const Navbar = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const scrollToSection = (sectionId) => {
+  const scrollToSection = (sectionId: any) => {
     if (location.pathname !== "/") {
       navigate("/");
       setTimeout(() => {
