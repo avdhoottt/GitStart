@@ -19,7 +19,7 @@ const Hero = () => {
             className="inline-flex gap-3 border py-1.5 px-3 rounded-full border-white/10 bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-colors"
           >
             <span className="bg-gradient-to-r from-blue-400 via-blue-500 to-blue-400 text-transparent bg-clip-text [-webkit-background-clip:text] font-medium">
-              GitStart is here
+              Your Open Source Companion
             </span>
             <span className="inline-flex items-center gap-1">
               <ArrowRight size={16} color="#888888" />
