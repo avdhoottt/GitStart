@@ -74,11 +74,13 @@ const Navbar = () => {
 
   return (
     <header
-      className={`fixed w-full z-50 transition-all duration-300 ${
+      className={`fixed lg:w-full ${
+        isHomePage ? "w-[80%]" : "w-full"
+      } z-50 transition-all duration-300 ${
         scrolled ? "bg-black/90" : "bg-black/60"
       } backdrop-blur-md border-b border-white/5`}
       style={{
-        top: isHomePage && !scrolled ? `${bannerHeight}px` : 0,
+        top: 0,
       }}
       id="navbar"
     >
@@ -194,7 +196,7 @@ const Navbar = () => {
             transition={{ duration: 0.3 }}
             className="sm:hidden overflow-hidden bg-black/95 border-t border-white/5 backdrop-blur-lg"
           >
-            <div className="max-w-7xl mx-auto px-4 py-4 space-y-1">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 space-y-1">
               {navLinks.map((link) => {
                 if (link.requiresAuth && !currentUser) return null;
 
@@ -239,11 +241,11 @@ const Navbar = () => {
                         alt="Profile"
                         className="w-10 h-10 rounded-md border border-white/10"
                       />
-                      <div>
-                        <div className="font-medium text-white text-sm">
+                      <div className="overflow-hidden">
+                        <div className="font-medium text-white text-sm truncate">
                           {currentUser.displayName}
                         </div>
-                        <div className="text-xs text-white/60">
+                        <div className="text-xs text-white/60 truncate">
                           {currentUser.email}
                         </div>
                       </div>

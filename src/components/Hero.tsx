@@ -27,7 +27,7 @@ const Hero = () => {
           </a>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 sm:px-16 gap-12 items-center">
           <div className="text-center lg:text-left">
             <motion.h1
               className="text-5xl md:text-6xl xl:text-7xl font-bold tracking-tighter"

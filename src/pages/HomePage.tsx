@@ -10,7 +10,6 @@ import FAQ from "../components/FAQ";
 const HomePage = () => {
   return (
     <>
-      <Banner />
       <Navbar />
       <section id="home">
         <Hero />
