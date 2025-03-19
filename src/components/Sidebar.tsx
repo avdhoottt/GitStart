@@ -31,7 +31,6 @@ const Sidebar = () => {
   const { owner, repoName } = useParams();
   const navigate = useNavigate();
   const [navbarHeight, setNavbarHeight] = useState(64);
-  const [setScrollPosition] = useState(0);
 
   useEffect(() => {
     const updateNavbarHeight = () => {
@@ -46,15 +45,6 @@ const Sidebar = () => {
     window.addEventListener("resize", updateNavbarHeight);
 
     return () => window.removeEventListener("resize", updateNavbarHeight);
-  }, []);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrollPosition(window.scrollY);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
