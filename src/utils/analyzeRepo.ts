@@ -13,12 +13,17 @@ export const analyzeRepo = async (
   setIsLoading: any
 ) => {
   setIsLoading(true);
+
   try {
     const { owner, repo: repoName } = ExtractRepoInfo(repo);
 
+    const currentPath = window.location.pathname;
+    const targetPath = `/${owner}/${repoName}`;
+    const isAlreadyOnTargetPath = currentPath === targetPath;
+
     const repoInfo = await fetchLangStruct(owner, repoName);
+
     const importantFilePaths = await getImportantFilePaths(repoInfo);
-    console.log("Important files:", importantFilePaths);
 
     const importantFiles = await getImportantFiles(
       owner,
@@ -28,15 +33,31 @@ export const analyzeRepo = async (
     setRepoData(importantFiles);
 
     const analysis = await generatePromptAnalysis(importantFiles);
-    setAnalysis(analysis || "");
 
-    navigate(`/${owner}/${repoName}`);
+    if (!analysis || analysis.length < 100) {
+      console.error("⚠️ Analysis too short or empty, might indicate an error");
 
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 300);
-  } catch (error) {
+      const fallbackAnalysis = `# Repository Analysis\n\n## ${owner}/${repoName}\n\nThis repository contains ${
+        importantFiles.length
+      } important files including: ${importantFiles
+        .slice(0, 3)
+        .map((f) => f.name)
+        .join(", ")}, etc.\n\nPlease check back later for a complete analysis.`;
+      setAnalysis(fallbackAnalysis);
+    } else {
+      setAnalysis(analysis);
+    }
+
+    if (!isAlreadyOnTargetPath && navigate) {
+      navigate(`/${owner}/${repoName}`);
+    }
+
     setIsLoading(false);
-    console.error("There's no data", error);
+
+    return true;
+  } catch (error) {
+    console.error("❌ Error during repository analysis:", error);
+    setIsLoading(false);
+    return false;
   }
 };

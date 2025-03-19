@@ -21,6 +21,8 @@ interface RepoContextType {
   repoData: RepoFile[] | null;
   resetClicked: boolean;
   setResetClicked: (value: boolean) => void;
+  inputBtnClicked: boolean;
+  setInputBtnClicked: (value: boolean) => void;
   analysisHistory: HistoryContextType[] | null;
   setAnalysisHistory: (data: HistoryContextType[] | null) => void;
   setRepoData: (data: RepoFile[] | null) => void;
@@ -41,6 +43,8 @@ export const RepoContext = createContext<RepoContextType>({
   setRepoData: () => {},
   resetClicked: false,
   setResetClicked: () => {},
+  inputBtnClicked: false,
+  setInputBtnClicked: () => {},
   analysis: "",
   setAnalysis: () => {},
   isLoading: false,

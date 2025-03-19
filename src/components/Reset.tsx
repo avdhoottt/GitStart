@@ -26,19 +26,11 @@ const Reset = ({
   const { currentUser } = useAuth();
 
   const handleReset = async () => {
-    console.log("Reset button clicked");
     setResetClicked(true);
 
     if (!owner || !repoName || isResetLoading) {
-      console.log("Conditions not met:", {
-        owner,
-        repoName,
-        isResetLoading,
-      });
       return;
     }
-
-    console.log("Starting reset analysis...");
 
     setIsLoading(true);
     if (setParentLoading) setParentLoading(true);
@@ -47,14 +39,10 @@ const Reset = ({
     setAnalysis("");
 
     try {
-      console.log("Fetching repository structure...");
       const repoInfo = await fetchLangStruct(owner, repoName);
 
-      console.log("Getting important file paths...");
       const importantFilePaths = await getImportantFilePaths(repoInfo);
-      console.log("Important files:", importantFilePaths);
 
-      console.log("Fetching file contents...");
       const importantFiles = await getImportantFiles(
         owner,
         repoName,
@@ -62,11 +50,8 @@ const Reset = ({
       );
       setRepoData(importantFiles);
 
-      console.log("Generating analysis...");
       const analysis = await generatePromptAnalysis(importantFiles);
       setAnalysis(analysis || "");
-
-      console.log("Analysis complete!");
     } catch (error) {
       console.error("Analysis failed:", error);
     } finally {

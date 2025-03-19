@@ -1,7 +1,8 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useRepo } from "../context/useInput";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
   collection,
   doc,
@@ -13,6 +14,7 @@ import {
   writeBatch,
 } from "firebase/firestore";
 import { db } from "../auth/firebase";
+import { GitBranch, X, Menu, Plus, Trash2 } from "lucide-react";
 
 interface AnalysisHistoryItem {
   id: string;
@@ -28,20 +30,25 @@ const Sidebar = () => {
   const { currentUser } = useAuth();
   const { owner, repoName } = useParams();
   const navigate = useNavigate();
-
+  const [navbarHeight, setNavbarHeight] = useState(64);
   const [scrollPosition, setScrollPosition] = useState(0);
-  const navbarRef = useRef<HTMLElement | null>(null);
-  const [navbarHeight, setNavbarHeight] = useState(90);
 
   useEffect(() => {
-    navbarRef.current =
-      document.querySelector("nav") || document.querySelector(".navbar");
+    const updateNavbarHeight = () => {
+      const navbar = document.getElementById("navbar");
+      if (navbar) {
+        setNavbarHeight(navbar.offsetHeight);
+      }
+    };
 
-    if (navbarRef.current) {
-      const height = navbarRef.current.getBoundingClientRect().height;
-      setNavbarHeight(height);
-    }
+    updateNavbarHeight();
 
+    window.addEventListener("resize", updateNavbarHeight);
+
+    return () => window.removeEventListener("resize", updateNavbarHeight);
+  }, []);
+
+  useEffect(() => {
     const handleScroll = () => {
       setScrollPosition(window.scrollY);
     };
@@ -79,7 +86,7 @@ const Sidebar = () => {
       }
     };
     fetchHistory();
-  }, [currentUser, owner, repoName]);
+  }, [currentUser, owner, repoName, setAnalysisHistory]);
 
   const handleHistoryItemClick = async (item: AnalysisHistoryItem) => {
     try {
@@ -92,6 +99,9 @@ const Sidebar = () => {
         }
       }
       navigate(`/${item.owner}/${item.repoName}`);
+      if (window.innerWidth < 1024) {
+        setIsSidebarOpen(false);
+      }
     } catch (error) {
       console.error("Error getting history item:", error);
       navigate(`/${item.owner}/${item.repoName}`);
@@ -115,144 +125,159 @@ const Sidebar = () => {
       });
       await batch.commit();
       setAnalysisHistory([]);
+      navigate("/dashboard");
     } catch (error) {
       console.error("Error clearing history:", error);
     }
   };
 
   const getSidebarStyle = () => {
-    const topPosition = navbarHeight + 46;
-    const isNavbarVisible = scrollPosition < navbarHeight;
-
     return {
-      top: isNavbarVisible ? `${topPosition}px` : "0px",
-      height: isNavbarVisible ? `calc(100vh - ${topPosition}px)` : "100vh",
+      top: `${navbarHeight}px`,
+      height: `calc(100vh - ${navbarHeight}px)`,
       position: "fixed",
     } as React.CSSProperties;
   };
 
   return (
     <>
-      <button
-        className="sm:hidden md:hidden fixed z-50 bottom-6 right-6 bg-purple-600 hover:bg-purple-700 text-white p-3 rounded-full shadow-lg transition-colors duration-200"
-        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        aria-label="Toggle sidebar"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d={
-              isSidebarOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"
-            }
-          />
-        </svg>
-      </button>
-
       <div
-        className={`fixed left-0 z-40 w-72 bg-gray-900 border-r border-purple-900/30 transition-all duration-300 shadow-xl backdrop-blur-lg overflow-y-auto ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+        className={`fixed left-0 z-40 w-64 bg-black border-r border-white/10 transition-all duration-300 lg:shadow-xl overflow-y-auto ${
+          isSidebarOpen
+            ? "translate-x-0 shadow-xl"
+            : "-translate-x-full lg:translate-x-0"
         }`}
         style={getSidebarStyle()}
       >
         <div className="p-5 flex flex-col h-full">
-          <button
-            className="w-full bg-gradient-to-r from-purple-600 to-purple-800 text-white font-medium py-3 px-4 rounded-lg hover:from-purple-700 hover:to-purple-900 transition duration-200 text-sm mb-8 flex items-center justify-center shadow-lg"
+          <motion.button
+            className="w-full bg-black text-white font-medium py-2.5 px-4 rounded-lg border border-white/10 transition duration-200 text-sm mb-6 flex items-center justify-center group relative"
             onClick={() => navigate("/")}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4 mr-2"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg opacity-0 group-hover:opacity-50 blur transition duration-300"></div>
+            <div className="relative flex items-center justify-center z-10">
+              <Plus
+                size={16}
+                className="mr-2 text-blue-400 group-hover:text-blue-300"
               />
-            </svg>
-            New Analysis
-          </button>
+              <span className="group-hover:text-blue-300">New Analysis</span>
+            </div>
+          </motion.button>
 
-          <div className="text-xs uppercase text-gray-400 font-semibold tracking-wider mb-3 pl-2">
-            Analysis History
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-xs font-medium text-white/40 tracking-wide uppercase">
+              Analysis History
+            </h3>
+            <div className="text-xs text-white/40">
+              {analysisHistory?.length || 0} items
+            </div>
           </div>
 
-          <div className="overflow-y-auto flex-1 -mr-2 pr-2 space-y-3">
+          <div className="overflow-y-auto flex-1 space-y-1 pr-1 -mx-1">
             {analysisHistory && analysisHistory.length > 0 ? (
               analysisHistory.map((item) => (
-                <div
+                <motion.div
                   key={item.id}
-                  className={`p-4 rounded-lg cursor-pointer transition-all duration-200 text-sm ${
+                  className={`px-2 py-2 rounded-md cursor-pointer transition-all duration-150 text-sm ${
                     item.isActive
-                      ? "bg-purple-900/50 border border-purple-500/50 shadow-md"
-                      : "hover:bg-gray-800/70 border border-gray-800/50 hover:border-gray-700/50"
+                      ? "bg-gradient-to-r from-blue-500/20 to-purple-600/10 text-white border border-blue-500/20"
+                      : "hover:bg-white/5 text-white/70 hover:text-white border border-transparent"
                   }`}
                   onClick={() => handleHistoryItemClick(item)}
+                  whileHover={{ x: 3 }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  <div className="font-medium text-white">
-                    {item.owner}/{item.repoName}
+                  <div className="flex items-center">
+                    <GitBranch
+                      size={14}
+                      className={`mr-2 ${
+                        item.isActive ? "text-blue-400" : "text-white/40"
+                      }`}
+                    />
+                    <div className="flex-1 truncate font-medium">
+                      {item.owner}/{item.repoName}
+                    </div>
                   </div>
-                  <div className="text-xs text-gray-400 mt-2 flex justify-between items-center">
-                    <span>{item.date}</span>
-                    {item.isActive && (
-                      <span className="text-purple-400 bg-purple-950/50 px-2 py-0.5 rounded-full text-xs">
-                        Active
-                      </span>
-                    )}
+                  <div className="text-xs text-white/40 mt-1 pl-6 flex items-center">
+                    <svg
+                      className="w-3 h-3 mr-1 text-white/30"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                    {item.date}
                   </div>
-                </div>
+                </motion.div>
               ))
             ) : (
-              <div className="text-center text-gray-500 py-6 px-4 bg-gray-800/20 rounded-lg border border-gray-800/60">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-10 w-10 mx-auto mb-2 text-gray-600"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
+              <div className="py-8 px-3 text-center">
+                <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-white/5 flex items-center justify-center">
+                  <GitBranch size={20} className="text-white/30" />
+                </div>
+                <p className="text-white/50 text-sm mb-4">
+                  No analysis history found
+                </p>
+                <motion.button
+                  onClick={() => navigate("/")}
+                  className="mx-auto text-xs text-blue-400 hover:text-blue-300 inline-flex items-center bg-blue-500/10 px-3 py-1.5 rounded-md border border-blue-500/20"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <path
-                    fillRule="evenodd"
-                    d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14a6 6 0 110-12 6 6 0 010 12zm0-9a1 1 0 011 1v3a1 1 0 01-1 1H7a1 1 0 110-2h2V8a1 1 0 011-1z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                No analysis history found
+                  <Plus size={14} className="mr-1.5" />
+                  Start first analysis
+                </motion.button>
               </div>
             )}
           </div>
 
-          <div className="mt-auto pt-4 border-t border-gray-800 text-xs text-gray-400">
-            <div className="flex justify-between">
-              <button
-                className="px-3 py-2 hover:text-white transition-colors hover:bg-red-950/30 rounded-md"
+          <div className="mt-auto pt-3 border-t border-white/10 text-xs">
+            <div className="flex justify-center">
+              <motion.button
+                className="px-3 py-1.5 text-white/50 hover:text-red-400 transition-colors inline-flex items-center"
                 onClick={handleClearHistory}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
+                <Trash2 size={14} className="mr-1.5" />
                 Clear history
-              </button>
-              <button className="px-3 py-2 hover:text-white transition-colors hover:bg-gray-800/70 rounded-md">
-                Export all
-              </button>
+              </motion.button>
             </div>
           </div>
         </div>
       </div>
 
+      <motion.button
+        className="sm:hidden md:hidden fixed z-50 bottom-6 right-6 bg-black text-white p-3 rounded-full border border-white/10 shadow-xl transition-colors"
+        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        aria-label="Toggle sidebar"
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <div className="relative">
+          <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full opacity-0 group-hover:opacity-70 blur"></div>
+          {isSidebarOpen ? (
+            <X size={20} className="text-white" />
+          ) : (
+            <Menu size={20} className="text-white" />
+          )}
+        </div>
+      </motion.button>
+
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-30 lg:hidden"
           onClick={() => setIsSidebarOpen(false)}
           aria-hidden="true"
+          style={{ top: navbarHeight }}
         />
       )}
     </>

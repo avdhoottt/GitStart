@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { RepoProvider } from "./context/useInput";
 import AuthProvider from "./context/AuthContext";
 import HomePage from "./pages/HomePage";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import AnalysisDisplay from "./components/AnalysisDisplay";
 import Dashboard from "./pages/Dashboard";
 import { Analytics } from "@vercel/analytics/react";
@@ -22,6 +22,20 @@ interface HistoryContextType {
   isActive: boolean;
 }
 
+function RouteChangeHandler({
+  setInputBtnClicked,
+}: {
+  setInputBtnClicked: (value: boolean) => void;
+}) {
+  const location = useLocation();
+
+  useEffect(() => {
+    setInputBtnClicked(false);
+  }, [location.pathname, setInputBtnClicked]);
+
+  return null;
+}
+
 function App() {
   const [repo, setRepo] = useState<string>("");
   const [repoData, setRepoData] = useState<RepoFile[] | null>(null);
@@ -29,9 +43,26 @@ function App() {
     HistoryContextType[] | null
   >(null);
   const [resetClicked, setResetClicked] = useState<boolean>(false);
+  const [inputBtnClicked, setInputBtnClicked] = useState<boolean>(false);
   const [analysis, setAnalysis] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout | null = null;
+
+    if (inputBtnClicked) {
+      timeoutId = setTimeout(() => {
+        setInputBtnClicked(false);
+      }, 30000);
+    }
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [inputBtnClicked]);
 
   return (
     <BrowserRouter>
@@ -46,6 +77,8 @@ function App() {
             setAnalysis,
             resetClicked,
             setResetClicked,
+            inputBtnClicked,
+            setInputBtnClicked,
             analysisHistory,
             setAnalysisHistory,
             isLoading,
@@ -54,6 +87,8 @@ function App() {
             setError,
           }}
         >
+          <RouteChangeHandler setInputBtnClicked={setInputBtnClicked} />
+
           <Analytics />
           <Routes>
             <Route path="/" element={<HomePage />} />

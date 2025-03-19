@@ -105,9 +105,6 @@ export const getImportantFilePaths = async (
         }
       }
 
-      console.log(
-        `AI suggested ${filePaths.length} files, ${validatedPaths.length} were validated to exist`
-      );
       return validatedPaths.slice(0, 15);
     }
 

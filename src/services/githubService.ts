@@ -55,7 +55,6 @@ export const fetchLangStruct = async (owner: string, repo: string) => {
       structure: treeData.tree,
     };
   } catch (error) {
-    console.log("Error fetching repo info", error);
     return {
       languages: {},
       structure: [],
@@ -150,10 +149,6 @@ export const getImportantFiles = async (
         }
       }
     }
-
-    console.log(
-      `Retrieved ${validFiles.length} of ${filePaths.length} requested files`
-    );
 
     return validFiles;
   } catch (error) {
