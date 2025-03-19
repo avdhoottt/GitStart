@@ -6,7 +6,7 @@ const Footer = () => {
       <div className="container p-7 mx-auto relative z-10">
         <div className="flex flex-row justify-center items-center gap-4">
           <div className="text-center">
-            © 2024 GitStart Inc. Made with{" "}
+            © 2025 GitStart Inc. Made with{" "}
             <span className="relative inline-block">
               <span className="absolute -inset-1 bg-red-500/20 blur-sm rounded-full animate-pulse"></span>
               <span className="relative">❤️</span>
