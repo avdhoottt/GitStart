@@ -3,7 +3,7 @@ import { useRepo } from "../context/useInput";
 const InputField = ({
   className = "",
   type = "text",
-  placeholder = "Enter Github Url",
+  placeholder = "Enter Github repo Url",
 }) => {
   const { repo, setRepo } = useRepo();
 

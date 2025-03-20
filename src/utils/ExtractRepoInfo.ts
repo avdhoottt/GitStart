@@ -7,7 +7,7 @@ const ExtractRepoInfo = (url: string): { owner: string; repo: string } => {
   }
   return {
     owner: pathSegments[0],
-    repo: pathSegments[1],
+    repo: pathSegments[1].replace(/\.git$/, ""),
   };
 };
 
