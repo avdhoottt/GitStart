@@ -7,7 +7,6 @@ import Navbar from "./Navbar";
 import { useAuth } from "../context/AuthContext";
 import {
   collection,
-  addDoc,
   query,
   where,
   getDocs,
@@ -47,7 +46,6 @@ const AnalysisDisplay = () => {
   const navigate = useNavigate();
   const db = getFirestore();
   const [navbarHeight, setNavbarHeight] = useState(64);
-  const [hasSavedToHistory, setHasSavedToHistory] = useState(false);
 
   useEffect(() => {
     const updateNavbarHeight = () => {
