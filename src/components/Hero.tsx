@@ -81,7 +81,7 @@ const Hero = () => {
               <p className="text-white/60 mb-6">
                 Paste a GitHub repository URL below in the correct format:
                 <br />
-                <span className="bg-gradient-to-r from-blue-400 via-blue-500 to-blue-400 text-transparent bg-clip-text [-webkit-background-clip:text] font-medium">
+                <span className="bg-gradient-to-r from-blue-400 via-blue-500 to-blue-400 text-transparent bg-clip-text [-webkit-background-clip:text] mb-6">
                   https://github.com/username/repository
                 </span>
               </p>
