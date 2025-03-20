@@ -12,6 +12,10 @@ import {
   where,
   getDocs,
   getFirestore,
+  getDoc,
+  doc,
+  setDoc,
+  serverTimestamp,
 } from "firebase/firestore";
 import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
@@ -43,6 +47,7 @@ const AnalysisDisplay = () => {
   const navigate = useNavigate();
   const db = getFirestore();
   const [navbarHeight, setNavbarHeight] = useState(64);
+  const [hasSavedToHistory, setHasSavedToHistory] = useState(false);
 
   useEffect(() => {
     const updateNavbarHeight = () => {
@@ -230,36 +235,55 @@ const AnalysisDisplay = () => {
 
   useEffect(() => {
     const saveToHistory = async () => {
-      if (!currentUser || !owner || !repoName || !analysis || localIsLoading)
+      // Skip if conditions aren't met
+      if (!currentUser || !owner || !repoName || !analysis || localIsLoading) {
         return;
+      }
 
       try {
-        const historyRef = collection(db, "analysisHistory");
-        const q = query(
-          historyRef,
-          where("userId", "==", currentUser.uid),
-          where("owner", "==", owner),
-          where("repoName", "==", repoName)
+        // Create a deterministic document ID based on user and repo
+        // This ensures only one document can exist for this user+repo combination
+        const docId = `${currentUser.uid}_${owner}_${repoName}`.replace(
+          /[/\s.#$[\]]/g,
+          "_"
         );
 
-        const querySnapshot = await getDocs(q);
+        // Reference to the specific document
+        const docRef = doc(db, "analysisHistory", docId);
 
-        if (querySnapshot.empty) {
-          await addDoc(collection(db, "analysisHistory"), {
+        // Check if document already exists
+        const docSnap = await getDoc(docRef);
+
+        // Only create/update if document doesn't exist
+        if (!docSnap.exists()) {
+          await setDoc(docRef, {
+            useEmail: currentUser.email,
             userId: currentUser.uid,
             repoName: repoName,
             owner: owner,
-            createdAt: new Date(),
+            createdAt: serverTimestamp(),
             analysisContent: analysis,
+            // Adding a timestamp for when record was created
+            updatedAt: serverTimestamp(),
           });
+          console.log(
+            `Saved analysis for ${owner}/${repoName} with ID: ${docId}`
+          );
+        } else {
+          console.log(
+            `Analysis for ${owner}/${repoName} already exists, skipping save`
+          );
         }
       } catch (error) {
         console.error("Error saving to history:", error);
       }
     };
 
-    saveToHistory();
-  }, [currentUser, owner, repoName, analysis, localIsLoading]);
+    // Only attempt to save when we have complete data
+    if (analysis && !localIsLoading && currentUser) {
+      saveToHistory();
+    }
+  }, [currentUser, owner, repoName, analysis, localIsLoading, db]);
 
   // Render loading state
   if (localIsLoading || isLoading) {
